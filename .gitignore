@@ -1,0 +1,15 @@
+## Ignore Visual Studio temporary files, build results, etc.
+*.user
+*.suo
+*.cache
+*.pdb
+*.log
+*.vspscc
+*.vssscc
+.vs/
+bin/
+obj/
+packages/
+*.dbmdl
+*.dbproj.schemaview
+*.sln.docstates
