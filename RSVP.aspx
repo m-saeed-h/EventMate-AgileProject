@@ -5,72 +5,411 @@
 <head runat="server">
     <title>RSVP - EventMate</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f5f5f7;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
             margin: 0;
-            padding: 40px 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle background elements */
+        body::before,
+        body::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(147, 51, 234, 0.05) 100%);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        body::before {
+            top: -100px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        body::after {
+            bottom: -100px;
+            left: -100px;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.5; }
+            50% { transform: translateY(-15px) rotate(180deg); opacity: 0.8; }
         }
 
         .container {
-            background: #fff;
-            border-radius: 16px;
-            padding: 30px;
-            width: 400px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px 32px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-section {
+            margin-bottom: 32px;
             text-align: center;
         }
 
+        .header-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
+        }
+
         h2 {
-            margin-bottom: 20px;
-            color: #1d1d1f;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: #1e293b;
+            letter-spacing: -0.025em;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.5;
         }
 
         .event-info {
-            margin-bottom: 20px;
-            font-size: 16px;
-            color: #333;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            border: 1px solid #e5e7eb;
+            transition: all 0.2s ease;
         }
 
-        button {
-            margin-top: 15px;
-            background-color: #0071e3;
-            color: #fff;
+        .event-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .event-subtitle {
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .rsvp-button {
+            width: 100%;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 16px;
             border-radius: 12px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
+            transition: all 0.2s ease;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+            letter-spacing: 0.025em;
         }
 
-        button:hover {
-            background-color: #005bb5;
+        .rsvp-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.18);
+        }
+
+        .rsvp-button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .message {
-            margin-top: 15px;
-            font-size: 14px;
-            color: green;
+            margin-top: 24px;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-align: center;
+            font-size: 15px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.success {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .message.error {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 24px;
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+            font-size: 15px;
+        }
+
+        .back-link:hover {
+            color: #8b5cf6;
+            text-decoration: underline;
+        }
+
+        .celebration {
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .loading .rsvp-button {
+            background: linear-gradient(45deg, #95a5a6, #7f8c8d);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+                align-items: flex-start;
+                padding-top: 40px;
+            }
+
+            .container {
+                padding: 30px 25px;
+                margin: 0;
+                max-width: 100%;
+                border-radius: 20px;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .header-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .rsvp-button {
+                font-size: 1.1rem;
+                padding: 16px;
+            }
+
+            .event-info {
+                padding: 20px;
+            }
+
+            .event-title {
+                font-size: 1.2rem;
+            }
+
+            .event-subtitle {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+                padding-top: 20px;
+            }
+
+            .container {
+                padding: 25px 20px;
+                border-radius: 15px;
+            }
+
+            h2 {
+                font-size: 1.6rem;
+            }
+
+            .header-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .event-info {
+                padding: 15px;
+                border-radius: 12px;
+            }
+
+            .event-title {
+                font-size: 1.1rem;
+            }
+
+            .event-subtitle {
+                font-size: 0.85rem;
+            }
+
+            .rsvp-button {
+                font-size: 1rem;
+                padding: 14px;
+            }
+
+            .message {
+                font-size: 1rem;
+                padding: 15px;
+            }
+
+            .back-link {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            .header-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+            }
+
+            .event-info {
+                padding: 12px;
+            }
+
+            .event-title {
+                font-size: 1rem;
+            }
+
+            .event-subtitle {
+                font-size: 0.8rem;
+            }
+
+            .rsvp-button {
+                font-size: 0.9rem;
+                padding: 12px;
+            }
+        }
+
+        /* Landscape orientation for mobile */
+        @media (max-height: 600px) and (orientation: landscape) {
+            body {
+                align-items: flex-start;
+                padding-top: 20px;
+            }
+
+            .container {
+                padding: 25px 30px;
+            }
+
+            .header-section {
+                margin-bottom: 25px;
+            }
+
+            .header-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .event-info {
+                padding: 15px;
+                margin: 20px 0;
+            }
+        }
+
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .container {
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            }
         }
     </style>
 </head>
 <body>
     <form id="form1" runat="server">
         <div class="container">
-            <h2>RSVP for Event</h2>
+            <div class="header-section">
+                <div class="header-icon">🎉</div>
+                <h2>RSVP for Event</h2>
+                <p class="subtitle">Let us know you're coming!</p>
+            </div>
 
-            <asp:Label ID="lblEventTitle" runat="server" CssClass="event-info" />
+            <div class="event-info">
+                <div class="event-title">
+                    <asp:Label ID="lblEventTitle" runat="server" />
+                </div>
+                <div class="event-subtitle">
+                    We're excited to see you there!
+                </div>
+            </div>
 
-            <asp:Button ID="btnRSVP" runat="server" Text="RSVP" OnClick="btnRSVP_Click" />
+            <asp:Button ID="btnRSVP" runat="server" Text="🎉 YES, I'M COMING!" CssClass="rsvp-button" OnClick="btnRSVP_Click" />
 
-            <asp:Label ID="lblMessage" runat="server" CssClass="message" />
+            <asp:Label ID="lblMessage" runat="server" CssClass="message" Visible="false" />
+
+            <a href="Dashboard.aspx" class="back-link">← Back to Dashboard</a>
         </div>
     </form>
 </body>
